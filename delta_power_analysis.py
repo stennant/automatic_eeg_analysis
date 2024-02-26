@@ -55,41 +55,6 @@ def process_dir(file_name):
 
 
 
-def plot_raw_eeg_data(egg_data, prm):
-    print('plotting snippet of data...')
-    save_path = prm.get_file_path() + '/python'
-    if os.path.exists(save_path) is False:
-        os.makedirs(save_path)
-
-    stops_on_track = plt.figure(figsize=(3,6))
-    ax = stops_on_track.add_subplot(2, 1, 1)  # specify (nrows, ncols, axnum)
-    window = signal.gaussian(2, std=3)
-    channel_1 = np.array(egg_data.loc[:, 4])
-    channel_1 = signal.convolve(channel_1, window, mode='same')/ sum(window)
-    ax.plot(channel_1, '-', color='Black')
-    plt.ylabel('Amplitude (uV)', fontsize=18, labelpad = 0)
-    plt.xlabel('Time (sec)', fontsize=18, labelpad = 10)
-    #plt.xlim(0,200)
-    ax.yaxis.set_ticks_position('left')
-    ax.xaxis.set_ticks_position('bottom')
-
-    ax = stops_on_track.add_subplot(2, 1, 2)  # specify (nrows, ncols, axnum)
-    window = signal.gaussian(2, std=3)
-    channel_1 = np.array(egg_data.loc[:, 5])
-    channel_1 = signal.convolve(channel_1, window, mode='same')/ sum(window)
-    ax.plot(channel_1, '-', color='Black')
-    plt.ylabel('Amplitude (uV)', fontsize=18, labelpad = 0)
-    plt.xlabel('Time (sec)', fontsize=18, labelpad = 10)
-    #plt.xlim(0,200)
-    ax.yaxis.set_ticks_position('left')
-    ax.xaxis.set_ticks_position('bottom')
-    #Python_PostSorting.plot_utility.style_vr_plot(ax)
-    #ax.set_xticklabels(['-30', '70', '170'])
-    plt.tight_layout(pad=0.4, w_pad=0.5, h_pad=1.0)
-    plt.savefig(save_path + '/' + 'eeg_snippet' + '.png', dpi=200)
-    plt.close()
-
-
 def power_spectra(eeg_data):
     print('plotting snippet of data...')
     save_path = '/Users/sarahtennant/Work_Alfredo/EEG/' + 'plots'
@@ -121,24 +86,8 @@ def power_spectra(eeg_data):
     ylabel('Power [$\mu V^2$/Hz]')
     savefig('/Users/sarahtennant/Work_Alfredo/EEG/plots/channel4_powerspec.png')
 
-    plot(faxis, real(Sxx))                  # Plot spectrum vs frequency
-    xlim([0, 20])                          # Select frequency range
-    xlabel('Frequency [Hz]')                # Label the axes
-    ylabel('Power [$\mu V^2$/Hz]')
-    savefig('/Users/sarahtennant/Work_Alfredo/Analysis/EEG/plots/channel4_powerspec2.png')
-
-    write_to_csv(np.array(real(Sxx)))
-
     return real(Sxx)
 
-
-## Save to .csv file
-def write_to_csv(csvData):
-    with open('/Users/sarahtennant/Work_Alfredo/EEG/powerspectra-' + 'test' + '.csv', 'w') as csvFile:
-        writer = csv.writer(csvFile)
-        writer.writerows(csvData)
-    csvFile.close()
-    return
 
 
 def main():
@@ -157,9 +106,6 @@ def main():
 
     data = eeg_data.to_data_frame()
     eeg_data = data.head(n=1000)
-
-    # PLOT DATA
-    #plot_raw_eeg_data(eeg_data, file_path)
 
     # Power spectra on all data
     power_spectra(eeg_data)
