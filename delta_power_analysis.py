@@ -57,7 +57,7 @@ def process_dir(file_name):
 
 def power_spectra(eeg_data):
     print('plotting snippet of data...')
-    save_path = prm.get_file_path + '/plots'
+    save_path = prm.get_file_path() + '/plots'
     if os.path.exists(save_path) is False:
         os.makedirs(save_path)
     x = np.array(eeg_data.iloc[:, 3]) # extract the channel we want to analyse
@@ -68,7 +68,7 @@ def power_spectra(eeg_data):
     xlabel('Time [s]')                      # Label the time axis
     ylabel('Voltage [$\mu V$]')             # ... and the voltage axis
     autoscale(tight=True)                   # Minimize white space
-    savefig(prm.get_file_path + '/plots/channel4.png')
+    savefig(prm.get_file_path() + '/plots/channel4.png')
 
     N = x.shape[0]    # Define the total number of data points
     T = N * dt        # Define the total duration of the data
@@ -84,7 +84,7 @@ def power_spectra(eeg_data):
     xlim([0, 100])                          # Select frequency range
     xlabel('Frequency [Hz]')                # Label the axes
     ylabel('Power [$\mu V^2$/Hz]')
-    savefig( prm.get_file_path + '/plots/channel4_powerspec.png')
+    savefig( prm.get_file_path() + '/plots/channel4_powerspec.png')
 
     return real(Sxx)
 
