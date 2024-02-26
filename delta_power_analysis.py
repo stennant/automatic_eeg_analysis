@@ -20,8 +20,6 @@ prm = parameters.Parameters()
 # set global parameters
 def parameters(recording_folder):
     prm.set_file_path(recording_folder)
-    prm.set_local_recording_folder_path(recording_folder)
-    prm.set_output_path(recording_folder)
     prm.set_sampling_rate(250.4)
     prm.set_number_of_channels(16)
     prm.set_sample_datatype('int16')
