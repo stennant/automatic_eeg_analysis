@@ -55,6 +55,7 @@ def process_dir(file_name):
 
 
 
+
 def power_spectra(eeg_data):
     print('plotting snippet of data...')
     save_path = prm.get_file_path() + '/plots'
@@ -87,7 +88,6 @@ def power_spectra(eeg_data):
     savefig( prm.get_file_path() + '/plots/channel4_powerspec.png')
 
     return real(Sxx)
-
 
 
 def main():
