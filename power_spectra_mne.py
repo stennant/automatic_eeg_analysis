@@ -109,7 +109,7 @@ def load_state_data(state_data_path):
 
     # Load sleep state score from .csv
     data = pd.read_csv(state_data_path, delimiter=",") # read .csv file with sleep score
-    data['onset'] = data.index/5 # make column of time (index of the dataframe)
+    data['onset'] = data.index # make column of time (index of the dataframe)
     data['duration'] = 5 # set duration of event - set as 5 since the sleep score is calculated in epochs of 5 seconds
 
     data = label_sleep_data(data)
@@ -149,17 +149,16 @@ def power_spectra_by_state(custom_raw, annotated_custom_raw, array_events, annot
     #epoch_data.compute_psd(method='welch', picks='eeg', average=False, exclude='bads').plot(picks = 'eeg', spatial_colors=True)
 
     # Subset data by sleep state
-    psd_swd = epoch_data['SWD'].compute_psd(method='welch', exclude='bads')
-    psd_rem = epoch_data['REM'].compute_psd(method='welch', exclude='bads')
-    psd_nrem = epoch_data['NREM'].compute_psd(method='welch', exclude='bads')
-    psd_wake = epoch_data['Wake'].compute_psd(method='welch', exclude='bads')
-
+    psd_swd = epoch_data['SWD'].compute_psd(method='welch', exclude='bads', average='mean', n_fft=200, n_per_seg =200)
+    psd_rem = epoch_data['REM'].compute_psd(method='welch', exclude='bads', average='mean', n_fft=200, n_per_seg=200)
+    psd_nrem = epoch_data['NREM'].compute_psd(method='welch', exclude='bads', average='mean', n_fft=200, n_per_seg=200)
+    psd_wake = epoch_data['Wake'].compute_psd(method='welch', exclude='bads', average='mean', n_fft=200, n_per_seg=200)
     # plot power spectra for wake
     axes = plt.subplot() # create your own axes object
-    fig = psd_swd.plot(axes=axes, show=False, color = 'black', spatial_colors=False)
-    fig = psd_rem.plot(axes=axes, show=False, color = 'blue', spatial_colors=False)
-    fig = psd_nrem.plot(axes=axes, show=False, color = 'red', spatial_colors=False)
-    fig = psd_wake.plot(axes=axes, show=False, color = 'green', spatial_colors=False)
+    fig = psd_swd.plot(axes=axes, show=False, color = 'black', spatial_colors=False, average=True)
+    fig = psd_rem.plot(axes=axes, show=False, color = 'blue', spatial_colors=False, average=True)
+    fig = psd_nrem.plot(axes=axes, show=False, color = 'red', spatial_colors=False, average=True)
+    fig = psd_wake.plot(axes=axes, show=False, color = 'green', spatial_colors=False, average=True)
     fig.axes[0].set_title("Sleep State Power Spectra's") # access the axes object and set the title
     plt.show()
 
