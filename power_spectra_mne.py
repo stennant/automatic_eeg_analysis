@@ -31,8 +31,8 @@ display_decimation = 1
 
 #To set start and end times, put sample start and end below
 start_sample=15054049
-end_sample=16688608
-#end_sample=36688608
+#end_sample=16688608
+end_sample=36688608
 tmin = start_sample/sample_rate
 tmax = end_sample/sample_rate
 
@@ -109,7 +109,7 @@ def load_state_data(state_data_path):
 
     # Load sleep state score from .csv
     data = pd.read_csv(state_data_path, delimiter=",") # read .csv file with sleep score
-    data['onset'] = data.index # make column of time (index of the dataframe)
+    data['onset'] = data.index*5 # make column of time (index of the dataframe)
     data['duration'] = 5 # set duration of event - set as 5 since the sleep score is calculated in epochs of 5 seconds
 
     data = label_sleep_data(data)
