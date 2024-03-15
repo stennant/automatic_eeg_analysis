@@ -141,18 +141,18 @@ def power_spectra_by_state(custom_raw, annotated_custom_raw, array_events, annot
     epoch_data = mne.Epochs(raw = annotated_custom_raw, events = array_events, event_id = event_id, tmin=-0.1, tmax = 4.9)
     #epoch_data = mne.Epochs(raw = custom_raw, events = state_data, event_id = event_id)
     #epoch_data.plot(picks = ['eeg', 'emg']) # plot epoch data
-    event_color_dictionary = {0: "green", 1: "red", 2: "blue", 4: "black"}
+    #event_color_dictionary = {0: "green", 1: "red", 2: "blue", 4: "black"}
 
-    epoch_data.plot(picks = 'eeg' , n_epochs = 4, scalings ="auto")
+    #epoch_data.plot(picks = 'eeg' , n_epochs = 4, scalings ="auto")
 
     # Visualise raw epoched data with events
-    epoch_data.compute_psd(method="welch", picks='eeg', average=False, amplitude=False, exclude="bads").plot(picks = 'eeg', spatial_colors=True)
+    #epoch_data.compute_psd(method='welch', picks='eeg', average=False, exclude='bads').plot(picks = 'eeg', spatial_colors=True)
 
     # Subset data by sleep state
-    psd_swd = epoch_data['SWD'].compute_psd(method="welch", amplitude=False, exclude="bads")
-    psd_rem = epoch_data['REM'].compute_psd(method="welch", amplitude=False, exclude="bads")
-    psd_nrem = epoch_data['NREM'].compute_psd(method="welch", amplitude=False, exclude="bads")
-    psd_wake = epoch_data['Wake'].compute_psd(method="welch", amplitude=False, exclude="bads")
+    psd_swd = epoch_data['SWD'].compute_psd(method='welch', exclude='bads')
+    psd_rem = epoch_data['REM'].compute_psd(method='welch', exclude='bads')
+    psd_nrem = epoch_data['NREM'].compute_psd(method='welch', exclude='bads')
+    psd_wake = epoch_data['Wake'].compute_psd(method='welch', exclude='bads')
 
     # plot power spectra for wake
     axes = plt.subplot() # create your own axes object
