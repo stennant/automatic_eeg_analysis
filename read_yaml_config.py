@@ -61,3 +61,26 @@ def calculate_recording_duration(yaml_path):
     prm.set_start_sample(starttime)
     prm.set_end_sample(endtime)
     return
+
+
+
+
+#  this is here for testing or for using script as stand alone
+def main():
+    print('-------------------------------------------------------------')
+    print('-------------------------------------------------------------')
+
+    params = parameters.Parameters()
+
+    #path to the recording .dat file
+    file_path = '/Users/sarahtennant/Work_Alfredo/Analysis/SYNGAPE8/DATA/SYNGAPE8/SYNGAPE8_2781/' # for syngape8 rats
+    configuration_path =  'TAINI_1044_2781_EM10-2024_04_05-0000_configuration.yaml'
+
+
+    yaml_path = file_path + configuration_path
+
+    calculate_recording_duration(yaml_path)
+
+
+if __name__ == '__main__':
+    main()
