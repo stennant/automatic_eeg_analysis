@@ -72,6 +72,40 @@ def find_seizure_times(cepstrum_score, data, total_duration):
     return seizure_start_times, seizure_end_times
 
 
+def remove_false_positives(seizure_start_times, seizure_end_times ):
+    new_seizure_start_times = []
+    new_seizure_end_times = []
+    for rowcount, row in enumerate(seizure_start_times):
+        duration = seizure_end_times[rowcount] - seizure_start_times[rowcount]
+        if duration >= 1:
+            new_seizure_start_times = np.append(new_seizure_start_times, seizure_start_times[rowcount])
+            new_seizure_end_times = np.append(new_seizure_end_times, seizure_end_times[rowcount])
+        rowcount +=1
+    return new_seizure_start_times, new_seizure_end_times
+
+
+def collapse_seizures_within_one_second(seizure_start_times, seizure_end_times):
+    new_seizure_start_times = []
+    new_seizure_end_times = []
+    for rowcount, row in enumerate(seizure_start_times-1):
+        duration = seizure_end_times[rowcount] - seizure_start_times[rowcount+1]
+        if duration < 1:
+            new_seizure_start_times = np.append(new_seizure_start_times, seizure_start_times[rowcount])
+            new_seizure_end_times = np.append(new_seizure_end_times, seizure_end_times[rowcount+1])
+            rowcount +=2
+        elif duration > 1:
+            new_seizure_start_times = np.append(new_seizure_start_times, seizure_start_times[rowcount])
+            new_seizure_end_times = np.append(new_seizure_end_times, seizure_end_times[rowcount])
+            rowcount+=1
+    return new_seizure_start_times, new_seizure_end_times
+
+def calculate_seizure_duration(seizure_start_times, seizure_end_times):
+    seizure_durations = []
+    for rowcount, row in enumerate(seizure_start_times):
+        duration = (seizure_end_times[rowcount] - seizure_start_times[rowcount+1])/250.4
+        seizure_durations = np.append(seizure_durations, duration)
+    return seizure_durations
+
 
 def run_swd_detection(cropped_raw, all_channels, main_eeg, output_data_path, output_figure_path):
 
@@ -86,6 +120,14 @@ def run_swd_detection(cropped_raw, all_channels, main_eeg, output_data_path, out
     seizure_start_times, seizure_end_times = find_seizure_times(cepstrum_score, data, total_duration)
 
     cepstrum_plots.plot_data_with_seizures_marked(data, seizure_start_times, seizure_end_times) # if you want to plot the whole continuous data
+
+    new_seizure_start_times, new_seizure_end_times = remove_false_positives(seizure_start_times, seizure_end_times)
+
+    cepstrum_plots.plot_data_with_seizures_marked_without_false_positives(data, seizure_start_times, seizure_end_times) # if you want to plot the whole continuous data
+
+    seizure_start_times, seizure_end_times = collapse_seizures_within_one_second(new_seizure_start_times, new_seizure_end_times)
+
+    cepstrum_plots.plot_data_with_seizures_marked_without_false_positives(data, seizure_start_times, seizure_end_times) # if you want to plot the whole continuous data
 
     return
 
