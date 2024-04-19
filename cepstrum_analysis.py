@@ -76,7 +76,6 @@ def round_down(num, divisor):
 
 
 def window_data(data):
-    #time = np.asarray(data["time"])
     time = np.arange(0, 1, 1/250)
     amplitude = np.asarray(data["main_eeg_channel"])
     num = int(amplitude.shape[0]) #N = sampling_rate * duration
@@ -84,35 +83,25 @@ def window_data(data):
     return time, amplitude, num
 
 
-def cepstrum_calculation(n, amp, dt, t):
+def cepstrum_calculation(num, amplitude, dt, time):
 
-    #############################################################################
+    # cepstrum_plots.plot_continuous_data(time, amplitude) # plot the raw signal to check
 
-    # cepstrum_plots.plot_continuous_data(t, amp) # plot the raw signal to check
+    amplitude = amplitude.tolist()
 
-    #############################################################################
+    N=int(2**floor(log(num)/log(2.)))
 
-    amp = amp.tolist()
-    N=int(2**floor(log(n)/log(2.)))
-
-    if(N<n):  # zeropad
+    if(N<num):  # zeropad
         N=2*N
-        for i in range(n,int(N)):
-            amp.append(0.)
+        for i in range(num,int(N)):
+            amplitude.append(0.)
 
     NHS=N/2
 
-    idx,freq,ff,z,zz,ph,nhalf,df,num_fft=FFT(t,amp,dt).fft_data()
-
-    #print (" ")
-    #print (" Maximum:  Freq=%8.4g Hz   Amp=%8.4g " %(ff[idx],zz[idx]))
-
-    #############################################################################
+    idx,freq,ff,z,zz,ph,nhalf,df,num_fft=FFT(time,amplitude,dt).fft_data()
 
     # plot the fft results
     #cepstrum_plots.plot_fft(ff, zz)
-
-    #############################################################################
 
     a=z.real + z.imag*1j
 
@@ -126,23 +115,15 @@ def cepstrum_calculation(n, amp, dt, t):
         except ValueError:
             b[i] = np.nan
 
-    #############################################################################
-
     # plot log of FFT
     #cepstrum_plots.plot_fft_log(ff, b, NHS)
 
-    #############################################################################
-
     c=ifft(b)
-
-    #############################################################################
 
     # plot cepstrum results in quefrency and Hz
     #cepstrum_plots.plot_cepstrum(t, c, NHS)
 
-    #############################################################################
-
-    return c, t, NHS
+    return c, time, NHS
 
 
 def normalize_vector_max(vector):
@@ -222,7 +203,7 @@ def control_cepstrum_anaylsis(data):
         # Extract data to run on cepstrum analysis
         time,amplitude,num = window_data(data.iloc[rowstart:rowend, :])
 
-        # Read data and return basic stats of continuous data
+        # Basic stats of continuous data
         sr = 250
         dt = 1/sr
 
