@@ -34,6 +34,28 @@ def plot_data_with_seizures_marked(data, seizure_start_times, seizure_end_times)
     plt.close()
 
 
+def plot_data_with_seizures_marked_without_false_positives(data, seizure_start_times, seizure_end_times):
+    plt.figure(1)
+    plt.plot(data.iloc[:, 0], data.iloc[:, 1], linewidth=1.0)
+    plt.xlabel('Time(sec)')
+    plt.ylabel('Amplitude')
+    plt.grid(True)
+    plt.title('Time History')
+    try:
+        for rowcount, row in enumerate(seizure_start_times):
+            plt.hlines(y=200, xmin=seizure_start_times[rowcount], xmax=seizure_end_times[rowcount], linestyle='-',
+                       color='red', linewidth=2)
+    except TypeError:
+        plt.hlines(y=200, xmin=seizure_start_times[0], xmax=seizure_end_times[0], linestyle='-', color='red',
+                   linewidth=2)
+    plt.savefig('/Users/sarahtennant/Work_Alfredo/Analysis/Automatic_EEG_Analysis/figs/seiz_markedtrace2_eg.png',
+                dpi=200)
+    plt.draw()
+    plt.show()
+    plt.close()
+
+
+
 def plot_continuous_data(t, amp):
     plt.figure(1)
     plt.plot(t, amp, linewidth=1.0)
