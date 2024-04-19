@@ -71,25 +71,6 @@ class FFT:
         return idx,freq,ff,z,zz,ph,nhalf,df,num_fft
 
 
-class READ_DATA:
-
-    def __init__(self):
-        pass
-    @classmethod
-    def check_data(cls,a,b,num,sr,dt):
-
-        sample_rate_check(a,b,num,sr,dt)
-
-        return sr,dt
-
-    def read_and_stats(self, a, b, num):
-
-        sr,dt,ave,sd,rms,skew,kurtosis,dur=signal_stats(a,b,num)
-
-        sr,dt=READ_DATA.check_data(a,b,num,sr,dt)
-
-        return a,b,num,sr,dt,dur
-
 def round_down(num, divisor):
     return num - (num % divisor)
 
@@ -113,8 +94,6 @@ def cepstrum_calculation(n, amp, dt, t):
 
     amp = amp.tolist()
     N=int(2**floor(log(n)/log(2.)))
-
-    #print (" time history length = %d " %n)
 
     if(N<n):  # zeropad
         N=2*N
@@ -244,10 +223,11 @@ def control_cepstrum_anaylsis(data):
         time,amplitude,num = window_data(data.iloc[rowstart:rowend, :])
 
         # Read data and return basic stats of continuous data
-        t, amp, n, sr, dt, dur = READ_DATA().read_and_stats(time, amplitude, num)
+        sr = 250
+        dt = 1/sr
 
         # run cepstral analysis on windowed data
-        c, t, NHS = cepstrum_calculation(n, amp, dt, t)
+        c, t, NHS = cepstrum_calculation(num, amplitude, dt, time)
 
         # identify if there are peaks in theta in quefrency data - returns 1 if there is, 0 if not
         marker = identify_theta_peaks(c, t, NHS)

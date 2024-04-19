@@ -59,7 +59,10 @@ def run_sleep_analysis(cropped_raw, animal_id, all_channels, main_eeg, output_da
 
     data_with_time = remove_dc_component(filtered_data, main_eeg)
 
+    data_with_time = fill_outliers(data_with_time)
+
     main_eeg_channel = save_main_eeg_channel_as_csv(data_with_time, animal_id, main_eeg, output_data_path)
+
 
     return
 

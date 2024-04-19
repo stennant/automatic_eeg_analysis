@@ -525,7 +525,7 @@ def signal_stats(a, b, num):
     print("    dur = %8.4g sec \n" % dur)
     """
 
-    return sr, dt, ave, sd, rms, skewness, kurtosis, dur
+    return sr, dt, ave, sd, rms, skewness, kurtosis
 
 
 ###########################################################################
