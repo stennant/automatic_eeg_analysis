@@ -95,7 +95,7 @@ def crop_by_start_and_end(custom_raw):
     #plot_interactive(custom_raw)
 
     #custom_raw = custom_raw.crop(prm.get_start_sample(), prm.get_end_sample()) # take full 24 hour recording
-    cropped_raw = custom_raw.crop(52782, 52812) # testing dataset - 52800, 52805 for seizure, 52910, 52915 for non seizure, 52782, 52812 for both
+    cropped_raw = custom_raw.crop(52182, 52812) # testing dataset - 52800, 52805 for seizure, 52910, 52915 for non seizure, 52782, 52812 for both
     return cropped_raw
 
 
@@ -113,8 +113,7 @@ def main():
 
     make_folder_structure(output_figure_path, output_data_path)
 
-    # set start and end time by extracting from the configuration file
-    read_yaml_config.calculate_recording_duration(configuration_path)
+    read_yaml_config.calculate_recording_duration(configuration_path) # set start and end time by extracting from the configuration file
 
     custom_raw = process_dir(recording_folder)
 

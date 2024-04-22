@@ -35,7 +35,7 @@ def plot_data_with_seizures_marked(data, seizure_start_times, seizure_end_times)
 
 
 def plot_data_with_seizures_marked_without_false_positives(data, seizure_start_times, seizure_end_times):
-    plt.figure(1)
+    plt.figure(figsize=(13,4))
     plt.plot(data.iloc[:, 0], data.iloc[:, 1], linewidth=1.0)
     plt.xlabel('Time(sec)')
     plt.ylabel('Amplitude')

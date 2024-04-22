@@ -1,7 +1,5 @@
 from __future__ import print_function
 
-from tompy_functions import signal_stats,sample_rate_check
-from tompy_functions import GetInteger2
 from math import log,atan2,pi
 import math
 from numpy import floor,zeros,mean
@@ -12,6 +10,7 @@ from scipy import stats
 from scipy.fftpack import fft,ifft
 import matplotlib.pyplot as plt
 import cepstrum_plots
+import time
 
 class FFT:
 
@@ -76,16 +75,16 @@ def round_down(num, divisor):
 
 
 def window_data(data):
-    time = np.arange(0, 1, 1/250)
+    times = np.arange(0, 1, 1/250)
     amplitude = np.asarray(data["main_eeg_channel"])
     num = int(amplitude.shape[0]) #N = sampling_rate * duration
 
-    return time, amplitude, num
+    return times, amplitude, num
 
 
-def cepstrum_calculation(num, amplitude, dt, time):
+def cepstrum_calculation(num, amplitude, dt, times):
 
-    # cepstrum_plots.plot_continuous_data(time, amplitude) # plot the raw signal to check
+    # cepstrum_plots.plot_continuous_data(times, amplitude) # plot the raw signal to check
 
     amplitude = amplitude.tolist()
 
@@ -98,7 +97,7 @@ def cepstrum_calculation(num, amplitude, dt, time):
 
     NHS=N/2
 
-    idx,freq,ff,z,zz,ph,nhalf,df,num_fft=FFT(time,amplitude,dt).fft_data()
+    idx,freq,ff,z,zz,ph,nhalf,df,num_fft=FFT(times,amplitude,dt).fft_data()
 
     # plot the fft results
     #cepstrum_plots.plot_fft(ff, zz)
@@ -123,7 +122,7 @@ def cepstrum_calculation(num, amplitude, dt, time):
     # plot cepstrum results in quefrency and Hz
     #cepstrum_plots.plot_cepstrum(t, c, NHS)
 
-    return c, time, NHS
+    return c, times, NHS
 
 
 def normalize_vector_max(vector):
@@ -135,26 +134,18 @@ def normalize_vector_max(vector):
 
 def identify_theta_peaks(c, t, NHS):
 
-    quefrency = t[1:int(NHS)]
-    amplitude = c[1:int(NHS)].real
+    upper_theta_range = 0.1 #1/10 # divide by 1 to get quefrency
+    lower_theta_range = 0.2 #1/5 # divide by 1 to get quefrency
 
-    cepstrum_data = np.vstack((quefrency, amplitude))
+    cepstrum_data = np.vstack((t[1:int(NHS)], c[1:int(NHS)].real)) # quefrency, amplitude
     cepstrum_data = np.transpose(cepstrum_data)
 
-    lower_theta_range = 5
-    upper_theta_range = 10
-
-    upper_quefrency_theta = 1/lower_theta_range
-    lower_quefrency_theta = 1/upper_theta_range
-
     # extract data in the theta frequency range
-    upper_theta_band_data = cepstrum_data[cepstrum_data[:,0] >= lower_quefrency_theta]
-    theta_band_data = upper_theta_band_data[upper_theta_band_data[:,0] <= upper_quefrency_theta]
+    upper_theta_band_data = cepstrum_data[cepstrum_data[:,0] >= upper_theta_range]
+    theta_band_data = upper_theta_band_data[upper_theta_band_data[:,0] <= lower_theta_range]
 
     normalized_vector = normalize_vector_max(theta_band_data[:,1])
     theta_amplitude_zscore = stats.zscore(normalized_vector)
-
-    #############################################################################
 
     # plot quefrency in the theta range (0.1 to 0.2)
     #cepstrum_plots.plot_cepstrum_theta_range(theta_band_data)
@@ -164,8 +155,6 @@ def identify_theta_peaks(c, t, NHS):
 
     # plot z scored quefrency
     #cepstrum_plots.plot_zscore_cepstrum(theta_band_data, theta_amplitude_zscore)
-
-    #############################################################################
 
     threshold = 2.2
     marker = 0
@@ -181,6 +170,7 @@ def control_cepstrum_anaylsis(data):
 
     #cepstrum_plots.plot_all_data(data) # if you want to plot the whole continuous data
     print('Running cepstral analysis ....')
+    start = time.process_time() # so I can measure the time it takes for code to run
 
     # we want to analyse the data in 1 second windows that slide i.e. move by 0.2 seconds
     window_duration = 250 # how long in samples we want to analyse (1 second = 250 samples)
@@ -201,17 +191,24 @@ def control_cepstrum_anaylsis(data):
             rowend = rowstart + window_duration
 
         # Extract data to run on cepstrum analysis
-        time,amplitude,num = window_data(data.iloc[rowstart:rowend, :])
+        times,amplitude,num = window_data(data.iloc[rowstart:rowend, :])
 
         # Basic stats of continuous data
         sr = 250
         dt = 1/sr
+        start = time.process_time()  # so I can measure the time it takes for code to run
 
         # run cepstral analysis on windowed data
-        c, t, NHS = cepstrum_calculation(num, amplitude, dt, time)
+        c, t, NHS = cepstrum_calculation(num, amplitude, dt, times)
+
+        #ceptrum_time = time.process_time() - start
+        #print('cepstrum code took ' + str(ceptrum_time) + ' to run')
+        #start = time.process_time()  # so I can measure the time it takes for code to run
 
         # identify if there are peaks in theta in quefrency data - returns 1 if there is, 0 if not
         marker = identify_theta_peaks(c, t, NHS)
+        #end_time = time.process_time() - start
+        #print('theta peaks took ' + str(end_time) + ' to run')
 
         marker_array = np.repeat(marker, window_duration)
         cepstrum_score[rowstart:rowend, i] = marker_array
