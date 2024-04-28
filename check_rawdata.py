@@ -55,8 +55,8 @@ def plot_raw(eeg_data,file_name):
 
 
     #To set start and end times, put sample start and end below
-    tmin = prm.get_start_sample()/prm.get_sampling_rate()
-    tmax = prm.get_end_sample()/prm.get_sampling_rate()
+    #tmin = prm.get_start_sample()/prm.get_sampling_rate()
+    #tmax = prm.get_end_sample()/prm.get_sampling_rate()
 
     # To do a basic plot below. The following can be added for specifc order of channels -- order=[4, 5, 3, 0, 1, 14, 15, 16]'
     colors=dict(mag='darkblue', grad='b', eeg='k', eog='k', ecg='m', emg='g', ref_meg='steelblue', misc='steelblue', stim='b', resp='k', chpi='k')
@@ -65,7 +65,8 @@ def plot_raw(eeg_data,file_name):
     plt.ion() # need this for plotting interactive plot
 
     #fig = eeg_data.crop(tmin, tmax).plot(None, 60, 0, 16,color = colors, scalings = "auto", order=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15], show_options = "true" )
-    fig = eeg_data.crop(tmin, tmax).plot(None, 60, 0, 16,color = colors, scalings = "auto", order=[0,1,7,8,9,14,15], show_options = "true" )
+    #fig = eeg_data.crop(tmin, tmax).plot(None, 60, 0, 16,color = colors, scalings = "auto", order=[0,1,7,8,9,14,15], show_options = "true" )
+    fig = eeg_data.plot(None, 60, 0, 16,color = colors, scalings = "auto", order=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15], show_options = "true" )
     fig.savefig(file_name + 'eeg_snippet.png')
 
 
@@ -77,21 +78,21 @@ def main():
     print('-------------------------------------------------------------')
 
     #path to the recording .dat file
-    file_path = '/Users/sarahtennant/Work_Alfredo/Analysis/SYNGAPE8/DATA/SYNGAPE8/SYNGAPE8_2781/' # for syngape8 rats
+    file_path = '/Users/sarahtennant/Work_Alfredo/Analysis/SYNGAPE8/DATA/SYNGAPE8/SYNGAPE8_1755485/' # for syngape8 rats
     #file_path = '/Users/sarahtennant/Work_Alfredo/Analysis/GNU/DATA/GNU/GNU_676_REDO/' # for GNU mice
-    recording =  'TAINI_1044_2781_EM10-2024_04_05-0000.dat' # for rat 176923
-    configuration_path =  'TAINI_1044_2781_EM10-2024_04_05-0000_configuration.yaml'
+    recording = '1755485_continuous.dat' # for rat 176923
+    #configuration_path =  'TAINI_1044_2777_EM40-2024_04_03-0000_configuration.yaml'
 
     file_name = file_path + recording
     parameters(file_path)
     print('Processing ' + str(file_path + recording))
 
     # set start and end time by extracting from the configuration file
-    read_yaml_config.calculate_recording_duration(file_path + configuration_path)
+    #read_yaml_config.calculate_recording_duration(file_path + configuration_path)
 
 
     #set path to save data
-    output_path = '/Users/sarahtennant/Work_Alfredo/Analysis/GNU/Figures'
+    output_path = '/Users/sarahtennant/Work_Alfredo/Analysis/SYNGAPE8/Figures'
     # if the output path does not exist, make it
     if os.path.exists(output_path) is False:
         os.makedirs(output_path)
