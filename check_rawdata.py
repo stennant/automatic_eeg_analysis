@@ -41,12 +41,10 @@ def process_dir(file_name):
     # This creates the info that goes with the channels, which is names, sampling rate, and channel types
     info = mne.create_info(channel_names, prm.get_sampling_rate(), channel_types)
 
-
     # This makes the object that contains all the data and info about the channels. Computations like plotting, averaging, power spectrums can be performed on this object
     custom_raw = mne.io.RawArray(data, info)
 
     return custom_raw
-
 
 
 def plot_raw(eeg_data,file_name):
@@ -78,9 +76,9 @@ def main():
     print('-------------------------------------------------------------')
 
     #path to the recording .dat file
-    file_path = '/Users/sarahtennant/Work_Alfredo/Analysis/SYNGAPE8/DATA/SYNGAPE8/SYNGAPE8_1755485/' # for syngape8 rats
+    file_path = '/Users/sarahtennant/Work_Alfredo/Analysis/SYNGAPE8/DATA/SYNGAPE8/SYNGAPE8_2890/' # for syngape8 rats
     #file_path = '/Users/sarahtennant/Work_Alfredo/Analysis/GNU/DATA/GNU/GNU_676_REDO/' # for GNU mice
-    recording = '1755485_continuous.dat' # for rat 176923
+    recording = 'TAINI_1048_2890_EM4-2024_04_26-0000.dat' # for rat 176923
     #configuration_path =  'TAINI_1044_2777_EM40-2024_04_03-0000_configuration.yaml'
 
     file_name = file_path + recording
