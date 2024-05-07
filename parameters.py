@@ -12,7 +12,7 @@ class Parameters:
     display_decimation = []
     start_sample = []
     end_sample = []
-
+    recording_length = 'int16'
 
     def __init__(self):
         return
@@ -68,6 +68,11 @@ class Parameters:
     def set_sample_datatype(self, in6):
         Parameters.sample_datatype = in6
 
+    def get_recording_length(self):
+        return Parameters.recording_length
+
+    def set_recording_length(self, in6):
+        Parameters.recording_length = in6
 
     def get_display_decimation(self):
         return Parameters.display_decimation
