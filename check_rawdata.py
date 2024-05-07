@@ -76,9 +76,9 @@ def main():
     print('-------------------------------------------------------------')
 
     #path to the recording .dat file
-    file_path = '/Users/sarahtennant/Work_Alfredo/Analysis/SYNGAPE8/DATA/SYNGAPE8/SYNGAPE8_2890/' # for syngape8 rats
+    file_path = '/Users/sarahtennant/Work_Alfredo/Analysis/SYNGAPE8/DATA/SYNGAPE8/SYNGAPE8_2875/' # for syngape8 rats
     #file_path = '/Users/sarahtennant/Work_Alfredo/Analysis/GNU/DATA/GNU/GNU_676_REDO/' # for GNU mice
-    recording = 'TAINI_1048_2890_EM4-2024_04_26-0000.dat' # for rat 176923
+    recording = 'TAINI_1044_2875_EM1-2024_04_29-0001.dat' # for rat 176923
     #configuration_path =  'TAINI_1044_2777_EM40-2024_04_03-0000_configuration.yaml'
 
     file_name = file_path + recording
