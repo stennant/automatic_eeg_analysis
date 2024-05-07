@@ -1,4 +1,4 @@
-import OpenEphys
+import load_OpenEphys
 import numpy as np
 import matplotlib.pylab as plt
 

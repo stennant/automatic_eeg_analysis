@@ -19,10 +19,11 @@ def parameters(recording_folder):
     prm.set_file_path(recording_folder)
     prm.set_local_recording_folder_path(recording_folder)
     prm.set_output_path(recording_folder)
-    prm.set_sampling_rate(2000)
-    prm.set_number_of_channels(32)
+    prm.set_sampling_rate(1000)
+    prm.set_number_of_channels(64)
     prm.set_sample_datatype('int16')
     prm.set_display_decimation(1)
+    prm.set_recording_length(3600000) # 4 hours in samples (250)
     file_utility.init_data_file_names(prm, '100_RhythmData_CH', '')  # currently used
 
 
@@ -42,12 +43,10 @@ def set_continuous_data_path(prm):
 
 
 def process_dir(file_name):
-
     # Load the raw (1-D) data
     file_utility.set_continuous_data_path(prm)
 
-    custom_raw = Load_OpenEphys_AllTetrodes.load_continuous(prm)
-
+    custom_raw = Load_OpenEphys_AllTetrodes.load_continuous_64(prm)
     return custom_raw
 
 
@@ -77,7 +76,6 @@ def plot_raw(eeg_data,file_name):
     return eeg_data
 
 
-
 def downsample_dat(trace, down):
     downsampled = scipy.signal.resample(trace, int(np.shape(trace)[0] / down))
     return downsampled
@@ -88,9 +86,12 @@ def downsample_all_traces(eeg_data):
     print("downsampling data...")
 
     for channel in range((prm.get_number_of_channels())):
-        print(channel)
-        trace = data.iloc[:3600000, channel]
-        downsampled_trace = downsample_dat(trace, 8)
+        print('processing channel ' + channel)
+        trace = data.iloc[:prm.get_recording_length(), channel]
+
+        # downsample 1 kHz sampling to 250 Hz i.e. divide by 4
+        downsampled_trace = downsample_dat(trace, 4)
+
         if channel == 0:
             downsampled_eeg_data = downsampled_trace
         else:
@@ -99,10 +100,28 @@ def downsample_all_traces(eeg_data):
     return downsampled_eeg_data
 
 
+def split_recording(downsampled_eeg_data):
+    first_headstage = downsampled_eeg_data.iloc[:prm.get_recording_length()]
+    second_headstage = downsampled_eeg_data.iloc[prm.get_recording_length():(prm.get_recording_length()*2)]
+    third_headstage = downsampled_eeg_data.iloc[(prm.get_recording_length()*2):(prm.get_recording_length()*3)]
+    fourth_headstage = downsampled_eeg_data.iloc[(prm.get_recording_length()*3):(prm.get_recording_length()*4)]
+    return first_headstage, second_headstage, third_headstage, fourth_headstage
 
-def save_dat_files(data):
-    output_df_1 = pd.DataFrame(data)
-    output_df_1.to_csv('/Users/sarahtennant/Work_Alfredo/Analysis/SYNGAPE8/DATA/SYNGAPE8/SYNGAPE8_1755488/1755488_continuous_downsampled.dat')
+
+def save_dat_files(first_headstage, second_headstage, third_headstage, fourth_headstage):
+    print('saving files...')
+
+    output_df = pd.DataFrame(first_headstage)
+    output_df.to_csv('/Users/sarahtennant/Work_Alfredo/Analysis/OpenEphys/2024-05-02_10-25-03/headstage1_downsampled.dat')
+
+    output_df = pd.DataFrame(second_headstage)
+    output_df.to_csv('/Users/sarahtennant/Work_Alfredo/Analysis/OpenEphys/2024-05-02_10-25-03/headstage2_downsampled.dat')
+
+    output_df = pd.DataFrame(third_headstage)
+    output_df.to_csv('/Users/sarahtennant/Work_Alfredo/Analysis/OpenEphys/2024-05-02_10-25-03/headstage3_downsampled.dat')
+
+    output_df = pd.DataFrame(fourth_headstage)
+    output_df.to_csv('/Users/sarahtennant/Work_Alfredo/Analysis/OpenEphys/2024-05-02_10-25-03/headstage4_downsampled.dat')
 
 
 
@@ -112,10 +131,10 @@ def main():
     print('-------------------------------------------------------------')
 
     #path to the recording .dat file
-    file_name = '/Users/sarahtennant/Work_Alfredo/Analysis/OpenEphys/15W/1755485_20240310/5485_1 15W2024-03-10_10-31-27/RecordNode101/'
+    file_name = '/Users/sarahtennant/Work_Alfredo/Analysis/OpenEphys/2024-05-02_10-25-03/'
 
+    # set parameters
     parameters(file_name)
-    #print('Processing ' + str(file_path + recording))
 
     # LOAD DATA
     eeg_data = process_dir(file_name) # overall data
@@ -124,10 +143,13 @@ def main():
     #plot_raw(eeg_data, output_path)
 
     # DOWNSAMPLE DATA
-    data = downsample_all_traces()
+    downsampled_eeg_data = downsample_all_traces(eeg_data)
+
+    # split by four headstages
+    first_headstage, second_headstage, third_headstage, fourth_headstage = split_recording(downsampled_eeg_data)
 
     # SAVE DATA AS .DAT
-    save_dat_files()
+    save_dat_files(first_headstage, second_headstage, third_headstage, fourth_headstage)
 
 
 if __name__ == '__main__':
