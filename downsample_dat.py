@@ -18,7 +18,7 @@ def parameters(recording_folder):
     prm.set_file_path(recording_folder)
     prm.set_local_recording_folder_path(recording_folder)
     prm.set_output_path(recording_folder)
-    prm.set_sampling_rate(1000)
+    prm.set_sampling_rate(2000)
     prm.set_number_of_channels(32)
     prm.set_sample_datatype('int16')
     prm.set_display_decimation(1)
@@ -46,13 +46,12 @@ def process_dir(file_name):
 
     # This makes the object that contains all the data and info about the channels. Computations like plotting, averaging, power spectrums can be performed on this object
     custom_raw = mne.io.RawArray(data, info)
-    #cropped_raw = custom_raw.crop(10000, 11000) # testing dataset - 52800, 52805 for seizure, 52910, 52915 for non seizure, 52782, 52812 for both
-    return custom_raw
-
+    cropped_raw = custom_raw.crop(0, 14400) # testing dataset - 52800, 52805 for seizure, 52910, 52915 for non seizure, 52782, 52812 for both
+    return cropped_raw
 
 
 def downsample_dat(trace, down):
-    downsampled = scipy.signal.resample(trace, round(np.shape(trace)[0] / down))
+    downsampled = scipy.signal.resample(trace, int(np.shape(trace)[0] / down))
     return downsampled
 
 
@@ -61,8 +60,8 @@ def downsample_all_traces(eeg_data):
     print("downsampling data...")
     for channel in range((prm.get_number_of_channels())):
         print(channel)
-        trace = data.iloc[:, channel]
-        downsampled_trace = downsample_dat(trace, 4)
+        trace = data.iloc[:3600000, channel]
+        downsampled_trace = downsample_dat(trace, 8)
         if channel == 0:
             downsampled_eeg_data_1 = downsampled_trace
         elif channel > 0 and channel < 16:
@@ -82,7 +81,6 @@ def save_dat(data_1, data_2):
 
     output_df_2 = pd.DataFrame(data_2)
     output_df_2.to_csv('/Users/sarahtennant/Work_Alfredo/Analysis/SYNGAPE8/DATA/SYNGAPE8/SYNGAPE8_1755486/1755486_continuous_downsampled.dat')
-    #output_df.to_csv('/Users/sarahtennant/Work_Alfredo/Analysis/SYNGAPE8/DATA/SYNGAPE8/SYNGAPE8_1755485/1755485_continuous_downsampled.dat')
     return
 
 
