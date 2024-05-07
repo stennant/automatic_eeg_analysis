@@ -24,7 +24,7 @@ def parameters(recording_folder):
     prm.set_sample_datatype('int16')
     prm.set_display_decimation(1)
     prm.set_recording_length(3600000) # 4 hours in samples (250)
-    file_utility.init_data_file_names(prm, '100_RhythmData_CH', '')  # currently used
+    file_utility.init_data_file_names(prm, '100_CH', '')  # currently used
 
 
 def init_data_file_names(prm, beginning, end):
