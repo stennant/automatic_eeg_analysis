@@ -13,6 +13,8 @@ class Parameters:
     start_sample = []
     end_sample = []
     recording_length = 'int16'
+    continuous_file_name = ''
+    continuous_file_name_end = ''
 
     def __init__(self):
         return
@@ -91,3 +93,16 @@ class Parameters:
 
     def set_end_sample(self, in6):
         Parameters.end_sample = in6
+
+    def get_continuous_file_name(self):
+        return self.continuous_file_name
+
+    def set_continuous_file_name(self, cont_name):
+        Parameters.continuous_file_name = cont_name
+
+    def get_continuous_file_name_end(self):
+            return self.continuous_file_name_end
+
+    def set_continuous_file_name_end(self, cont_name):
+        Parameters.continuous_file_name_end = cont_name
+
