@@ -73,14 +73,14 @@ def crop_by_start_and_end(custom_raw):
     #plot_interactive(custom_raw)
 
     #custom_raw = custom_raw.crop(prm.get_start_sample(), prm.get_end_sample()) # take full 24 hour recording
-    cropped_raw = custom_raw.crop(71955, 71964) # testing dataset - 52800, 52805 for seizure, 52910, 52915 for non seizure, 52782, 52812 for both
+    cropped_raw = custom_raw.crop(48400, 48406) # testing dataset - 52800, 52805 for seizure, 52910, 52915 for non seizure, 52782, 52812 for both
     return cropped_raw
 
 
 def plot_example(custom_raw, output_figure_path ):
     eeg_data = custom_raw.to_data_frame()
 
-    eeg_channel5 = eeg_data.iloc[:,3]
+    eeg_channel5 = eeg_data.iloc[:,4]
     mean_of_channel = np.mean(eeg_channel5)
     main_eeg_channel = eeg_channel5 - mean_of_channel
 
@@ -96,8 +96,9 @@ def plot_example(custom_raw, output_figure_path ):
         which='both',  # both major and minor ticks are affected
         bottom=False,  # ticks along the bottom edge are off
         labelbottom=False)  # labels along the bottom edge are off
+    plt.ylim(-150, 150)
 
-    eeg_channel8 = eeg_data.iloc[:,4]
+    eeg_channel8 = eeg_data.iloc[:,5]
     mean_of_channel = np.mean(eeg_channel8)
     main_eeg_channel = eeg_channel8 - mean_of_channel
 
@@ -112,8 +113,9 @@ def plot_example(custom_raw, output_figure_path ):
         which='both',  # both major and minor ticks are affected
         bottom=False,  # ticks along the bottom edge are off
         labelbottom=False)  # labels along the bottom edge are off
+    plt.ylim(-150, 250)
 
-    eeg_channel5 = eeg_data.iloc[:,5]
+    eeg_channel5 = eeg_data.iloc[:,6]
     mean_of_channel = np.mean(eeg_channel5)
     main_eeg_channel = eeg_channel5 - mean_of_channel
 
@@ -128,6 +130,7 @@ def plot_example(custom_raw, output_figure_path ):
         which='both',  # both major and minor ticks are affected
         bottom=False,  # ticks along the bottom edge are off
         labelbottom=False)  # labels along the bottom edge are off
+    plt.ylim(-150, 150)
 
     eeg_channel8 = eeg_data.iloc[:,8]
     mean_of_channel = np.mean(eeg_channel8)
@@ -139,6 +142,7 @@ def plot_example(custom_raw, output_figure_path ):
     plt.xlabel('Time (seconds)', fontsize=18, labelpad=10)
     ax.spines['top'].set_visible(False)
     ax.spines['right'].set_visible(False)
+    plt.ylim(-150, 250)
 
     #plt.tight_layout(pad=0.4, w_pad=1, h_pad=1.0)
     plt.subplots_adjust(hspace=.35, wspace=.35, bottom=0.25, left=0.1, right=0.9, top=0.9)
@@ -146,8 +150,7 @@ def plot_example(custom_raw, output_figure_path ):
     #plt.locator_params(axis='x', nbins=3)
     #plt.xlim(0, 200)
     #plt.ylim(0)
-    plt.show()
-    plt.savefig(output_figure_path + '/' + 'exampletrace3.png', dpi=200)
+    plt.savefig(output_figure_path + '/' + 'exampletrace_wt1.png', dpi=200)
     plt.close()
 
 
@@ -159,7 +162,7 @@ def main():
 
     #path to the recording .dat file
 
-    recording_folder = '/Users/sarahtennant/Work_Alfredo/Analysis/SYNGAPE8/DATA/SYNGAPE8/SYNGAPE8_2890/TAINI_1048_2890_EM4-2024_04_26-0000.dat'  # for syngape8 rats
+    recording_folder = '/Users/sarahtennant/Work_Alfredo/Analysis/SYNGAPE8/DATA/SYNGAPE8/SYNGAPE8_2875/TAINI_1044_2875_EM1-2024_04_29-0001.dat'  # for syngape8 rats
     #configuration_path = '/Users/sarahtennant/Work_Alfredo/Analysis/SYNGAPE8/DATA/SYNGAPE8/SYNGAPE8_176923/TAINI_1044_176923-EM3-2024_03_27-0000_configuration.yaml'  # for syngape8 rats
     output_figure_path = '/Users/sarahtennant/Work_Alfredo/Analysis/SYNGAPE8/Figures'
     output_data_path = '/Users/sarahtennant/Work_Alfredo/Analysis/SYNGAPE8/Data_output'

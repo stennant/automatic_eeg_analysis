@@ -76,9 +76,9 @@ def main():
     print('-------------------------------------------------------------')
 
     #path to the recording .dat file
-    file_path = '/Users/sarahtennant/Work_Alfredo/Analysis/SYNGAPE8/DATA/SYNGAPE8/SYNGAPE8_2875/' # for syngape8 rats
-    #file_path = '/Users/sarahtennant/Work_Alfredo/Analysis/GNU/DATA/GNU/GNU_676_REDO/' # for GNU mice
-    recording = 'TAINI_1044_2875_EM1-2024_04_29-0001.dat' # for rat 176923
+    #file_path = '/Users/sarahtennant/Work_Alfredo/Analysis/SYNGAPE8/DATA/SYNGAPE8/SYNGAPE8_2875/' # for syngape8 rats
+    file_path = '/Users/sarahtennant/Work_Alfredo/Analysis/GNU/DATA/GNU/GNU_702/' # for GNU mice
+    recording = 'TAINI_1048_702_EM3-2024_04_15-0000.dat' # for rat 176923
     #configuration_path =  'TAINI_1044_2777_EM40-2024_04_03-0000_configuration.yaml'
 
     file_name = file_path + recording
@@ -90,7 +90,7 @@ def main():
 
 
     #set path to save data
-    output_path = '/Users/sarahtennant/Work_Alfredo/Analysis/SYNGAPE8/Figures'
+    output_path = '/Users/sarahtennant/Work_Alfredo/Analysis/GNU/Figures'
     # if the output path does not exist, make it
     if os.path.exists(output_path) is False:
         os.makedirs(output_path)
