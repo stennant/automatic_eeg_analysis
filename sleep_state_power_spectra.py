@@ -31,29 +31,26 @@ display_decimation = 1
 
 
 #To set start and end times, put sample start and end below
-start_sample=12830497
-end_sample=34465056
+start_sample=128304
+end_sample=344650
 tmin = start_sample/sample_rate
 tmax = end_sample/sample_rate
 
 
 # To load data, put file location and name below
-#file_path = '/Users/sarahtennant/Work_Alfredo/Analysis/EOUBE/DATA/EOUBE/EOUBE_454redo'
-file_path = '/Users/sarahtennant/Work_Alfredo/Analysis/GNU/DATA/GNU/GNU_672'
-#recording = '/TAINI_1045_D_454redo_EOUBE_EM_3-2024_02_06-0001.dat'
-#recording = '/TAINI_1045_D_671_GNU-2024_03_12-0000.dat'
-recording = '/TAINI_1047_A_672_GNU-2024_03_12-0000.dat'
+file_path = '/Volumes/Sarah/GNU/DATA/GNU/GNU_702'
+recording = '/TAINI_1048_702_EM3-2024_04_15-0000.dat'
 
 file_name = file_path + recording
 
-output_path = '/Users/sarahtennant/Work_Alfredo/Analysis/GNU/OUTPUT/GNU/GNU_672/Figures/'
+output_path = '/Volumes/Sarah/GNU/DATA/GNU/GNU_702'
 
 # if the output path does not exist, make it
 if os.path.exists(output_path) is False:
     os.makedirs(output_path)
 
 # path to the sleep score output from R below
-state_data_path = '/Users/sarahtennant/Work_Alfredo/Analysis/GNU/OUTPUT/GNU/GNU_672/GNU_672_BL1-dge_swd.csv'
+state_data_path = '/Volumes/Sarah/GNU/OUTPUT/GNU/GNU_702/GNU_702_BL1-dge_swd.csv'
 
 # Assign colors to each channel of raw EEG
 colors=dict(mag='darkblue', grad='b', eeg='k', eog='k', ecg='m',emg='g', ref_meg='steelblue', misc='steelblue', stim='b',resp='k', chpi='k')
@@ -91,7 +88,7 @@ def load_dat(file_name):
 
     # For testing code, take only a small segment of the data
     #custom_raw = custom_raw.crop(tmin=0, tmax=60) # this is for testing
-    custom_raw = custom_raw.crop(tmin, tmax) # take full 24 hour recording
+    #custom_raw = custom_raw.crop(tmin, tmax) # take full 24 hour recording
     return custom_raw
 
 

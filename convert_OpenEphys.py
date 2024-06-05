@@ -50,27 +50,21 @@ def process_dir(file_name):
 
 
 
-def plot_raw(dat_raw):
+def plot_raw(dat_raw, sampling_rate):
     channel_names = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16']
-    channel_types = ['emg', 'misc', 'eeg', 'misc', 'misc', 'misc', 'emg', 'misc', 'misc', 'misc', 'misc', 'misc', 'eeg',
-                     'misc', 'misc', 'eeg']
+    channel_types = ['emg', 'misc', 'misc', 'misc', 'misc', 'misc', 'misc', 'misc', 'misc', 'misc', 'misc', 'misc', 'misc',
+                     'misc', 'misc', 'misc']
     # This creates the info that goes with the channels, which is names, sampling rate, and channel types
-    #info = mne.create_info(channel_names, prm.get_sampling_rate(), channel_types)
-    info = mne.create_info(channel_names, 250, channel_types)
+    info = mne.create_info(channel_names, sampling_rate, channel_types)
     # This makes the object that contains all the data and info about the channels. Computations like plotting, averaging, power spectrums can be performed on this object
     custom_raw = mne.io.RawArray(dat_raw, info)
 
-    import matplotlib.pyplot as plt
-
     plt.switch_backend('TkAgg')  # need this for plotting interactive plot
+    #Qt5Agg
     plt.ion()  # need this for plotting interactive plot
 
-    colors = dict(mag='darkblue', grad='b', eeg='k', eog='k', ecg='m',
-                  emg='g', ref_meg='steelblue', misc='steelblue', stim='b',
-                  resp='k', chpi='k')
-
-    custom_raw.plot(None, 60, 0, 16, color=colors, scalings="auto",
-                    order=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], show_options="true")
+    custom_raw.plot(None, 1, 0,
+                    order=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15], show_options="true", block=True)
     return
 
 
@@ -99,7 +93,7 @@ def downsample_all_traces(eeg_data):
 
 
 def split_recording(downsampled_eeg_data):
-    plot_raw(downsampled_eeg_data[:16,10000:30000])
+    #plot_raw(downsampled_eeg_data[:16,1250000:1260000], 250)
 
     downsampled_eeg_data = pd.DataFrame(downsampled_eeg_data)
 
@@ -120,28 +114,16 @@ def split_recording(downsampled_eeg_data):
 
 def save_dat_files(first_headstage, second_headstage, third_headstage, fourth_headstage):
     print('saving files...')
-    #first_headstage = pd.DataFrame(first_headstage)
-    first_headstage.astype('int16').tofile('/Users/sarahtennant/Work_Alfredo/Analysis/OpenEphys/2024-05-02_10-25-03/2876_downsampled.dat')
-    #first_headstage.to_csv('/Users/sarahtennant/Work_Alfredo/Analysis/OpenEphys/2024-05-02_10-25-03/headstage1_downsampled.dat')
-
-    second_headstage.astype('int16').tofile('/Users/sarahtennant/Work_Alfredo/Analysis/OpenEphys/2024-05-02_10-25-03/2874_downsampled.dat')
-    #second_headstage = pd.DataFrame(second_headstage)
-    #second_headstage.to_csv('/Users/sarahtennant/Work_Alfredo/Analysis/OpenEphys/2024-05-02_10-25-03/headstage2_downsampled.dat')
-
-    third_headstage.astype('int16').tofile('/Users/sarahtennant/Work_Alfredo/Analysis/OpenEphys/2024-05-02_10-25-03/empty_downsampled.dat')
-    #third_headstage = pd.DataFrame(third_headstage)
-    #third_headstage.to_csv('/Users/sarahtennant/Work_Alfredo/Analysis/OpenEphys/2024-05-02_10-25-03/headstage3_downsampled.dat')
-
-    fourth_headstage.astype('int16').tofile('/Users/sarahtennant/Work_Alfredo/Analysis/OpenEphys/2024-05-02_10-25-03/2877_downsampled.dat')
-    #fourth_headstage = pd.DataFrame(fourth_headstage)
-    #fourth_headstage.to_csv('/Users/sarahtennant/Work_Alfredo/Analysis/OpenEphys/2024-05-02_10-25-03/headstage4_downsampled.dat')
+    first_headstage.astype('int16').tofile('/Users/sarahtennant/Work_Alfredo/Analysis/OpenEphys/2024-04-24_10-38-26/empty_downsampled.dat')
+    second_headstage.astype('int16').tofile('/Users/sarahtennant/Work_Alfredo/Analysis/OpenEphys/2024-04-24_10-38-26/2780_downsampled.dat')
+    third_headstage.astype('int16').tofile('/Users/sarahtennant/Work_Alfredo/Analysis/OpenEphys/2024-04-24_10-38-26/2783_downsampled.dat')
+    fourth_headstage.astype('int16').tofile('/Users/sarahtennant/Work_Alfredo/Analysis/OpenEphys/2024-04-24_10-38-26/2781_downsampled.dat')
 
 
 
 def load_dat(file_name1, file_name2):
 
     # Load the raw (1-D) data
-    #input_df = pd.read_table(file_name2)
     input_df1 = np.fromfile(file_name1, dtype=prm.get_sample_datatype())
     input_df2 = np.fromfile(file_name2, dtype=prm.get_sample_datatype())
     #with open(file_name, 'r') as file:
@@ -156,7 +138,7 @@ def main():
     print('-------------------------------------------------------------')
 
     #path to the recording .dat file
-    file_name = '/Users/sarahtennant/Work_Alfredo/Analysis/OpenEphys/2024-05-02_10-25-03/'
+    file_name = '/Users/sarahtennant/Work_Alfredo/Analysis/OpenEphys/2024-04-24_10-38-26/'
 
     # set parameters
     parameters(file_name)
@@ -165,7 +147,7 @@ def main():
     eeg_data = process_dir(file_name) # overall data
 
     # PLOT DATA
-    #plot_raw(eeg_data[:16,:])
+    #plot_raw(eeg_data[:16,5000000:5010000], 1000)
 
     # DOWNSAMPLE DATA
     downsampled_eeg_data = downsample_all_traces(eeg_data)
@@ -176,10 +158,10 @@ def main():
     # SAVE DATA AS .DAT
     save_dat_files(first_headstage, second_headstage, third_headstage, fourth_headstage)
 
-    dat_filename1 = '/Users/sarahtennant/Work_Alfredo/Analysis/SYNGAPE8/DATA/SYNGAPE8/SYNGAPE8_2777/TAINI_1044_2777_EM40-2024_04_03-0000.dat'
-    dat_filename2 = '/Users/sarahtennant/Work_Alfredo/Analysis/OpenEphys/2024-05-02_10-25-03/2877_downsampled.dat'
+    #dat_filename1 = '/Users/sarahtennant/Work_Alfredo/Analysis/SYNGAPE8/DATA/SYNGAPE8/SYNGAPE8_2777/TAINI_1044_2777_EM40-2024_04_03-0000.dat'
+    #dat_filename2 = '/Users/sarahtennant/Work_Alfredo/Analysis/OpenEphys/2024-05-02_10-25-03/2877_downsampled.dat'
     #check the .dat file
-    load_dat(dat_filename1, dat_filename2)
+    #load_dat(dat_filename1, dat_filename2)
 
 
 if __name__ == '__main__':
