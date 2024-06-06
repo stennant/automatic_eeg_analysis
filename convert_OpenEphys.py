@@ -10,6 +10,7 @@ from OpenEphys import file_utility
 from OpenEphys import Load_OpenEphys_AllTetrodes
 import downsample_dat
 import matplotlib.pyplot as plt
+from sklearn import preprocessing
 
 prm = parameters.Parameters()
 
@@ -72,6 +73,10 @@ def downsample_dat(trace, down):
     downsampled = scipy.signal.resample(trace, int(np.shape(trace)[0] / down))
     return downsampled
 
+def rescale_array(array):
+    scaler = preprocessing.MinMaxScaler(feature_range=(2200, 32767))
+    scaled_data = scaler.fit_transform(array)
+    return scaled_data
 
 def downsample_all_traces(eeg_data):
     data = pd.DataFrame(eeg_data)
@@ -83,6 +88,7 @@ def downsample_all_traces(eeg_data):
 
         # downsample 1 kHz sampling to 250 Hz i.e. divide by 4
         downsampled_trace = downsample_dat(trace, 4)
+        downsampled_trace = rescale_array(downsampled_trace)
 
         if channel == 0:
             downsampled_eeg_data = downsampled_trace
@@ -114,22 +120,25 @@ def split_recording(downsampled_eeg_data):
 
 def save_dat_files(first_headstage, second_headstage, third_headstage, fourth_headstage):
     print('saving files...')
-    first_headstage.astype('int16').tofile('/Users/sarahtennant/Work_Alfredo/Analysis/OpenEphys/2024-04-24_10-38-26/empty_downsampled.dat')
-    second_headstage.astype('int16').tofile('/Users/sarahtennant/Work_Alfredo/Analysis/OpenEphys/2024-04-24_10-38-26/2780_downsampled.dat')
-    third_headstage.astype('int16').tofile('/Users/sarahtennant/Work_Alfredo/Analysis/OpenEphys/2024-04-24_10-38-26/2783_downsampled.dat')
-    fourth_headstage.astype('int16').tofile('/Users/sarahtennant/Work_Alfredo/Analysis/OpenEphys/2024-04-24_10-38-26/2781_downsampled.dat')
+    first_headstage.astype('int16').tofile('/Users/sarahtennant/Work_Alfredo/Analysis/OpenEphys/2024-05-02_10-25-03/2876_downsampled.dat')
+    second_headstage.astype('int16').tofile('/Users/sarahtennant/Work_Alfredo/Analysis/OpenEphys/2024-05-02_10-25-03/2874_downsampled.dat')
+    third_headstage.astype('int16').tofile('/Users/sarahtennant/Work_Alfredo/Analysis/OpenEphys/2024-05-02_10-25-03/empty_downsampled.dat')
+    fourth_headstage.astype('int16').tofile('/Users/sarahtennant/Work_Alfredo/Analysis/OpenEphys/2024-05-02_10-25-03/2877_downsampled.dat')
 
 
 
-def load_dat(file_name1, file_name2):
+def load_dat(file_name2):
 
     # Load the raw (1-D) data
-    input_df1 = np.fromfile(file_name1, dtype=prm.get_sample_datatype())
+    #input_df1 = np.fromfile(file_name1, dtype=prm.get_sample_datatype())
     input_df2 = np.fromfile(file_name2, dtype=prm.get_sample_datatype())
+    shape = np.shape(input_df2)[0]/16
+    input_df = np.reshape(input_df2, (16,int(shape)))
+
     #with open(file_name, 'r') as file:
     #    input_df = file.read()
 
-    return input_df2
+    return input_df
 
 
 
@@ -138,7 +147,7 @@ def main():
     print('-------------------------------------------------------------')
 
     #path to the recording .dat file
-    file_name = '/Users/sarahtennant/Work_Alfredo/Analysis/OpenEphys/2024-04-24_10-38-26/'
+    file_name = '/Users/sarahtennant/Work_Alfredo/Analysis/OpenEphys/2024-05-02_10-25-03/'
 
     # set parameters
     parameters(file_name)
@@ -158,10 +167,10 @@ def main():
     # SAVE DATA AS .DAT
     save_dat_files(first_headstage, second_headstage, third_headstage, fourth_headstage)
 
-    #dat_filename1 = '/Users/sarahtennant/Work_Alfredo/Analysis/SYNGAPE8/DATA/SYNGAPE8/SYNGAPE8_2777/TAINI_1044_2777_EM40-2024_04_03-0000.dat'
-    #dat_filename2 = '/Users/sarahtennant/Work_Alfredo/Analysis/OpenEphys/2024-05-02_10-25-03/2877_downsampled.dat'
+    dat_filename2 = '/Users/sarahtennant/Work_Alfredo/Analysis/OpenEphys/2024-05-02_10-25-03/2876_downsampled.dat'
     #check the .dat file
-    #load_dat(dat_filename1, dat_filename2)
+    dat = load_dat(dat_filename2)
+    plot_raw(dat[:,1250000:1260000], 250)
 
 
 if __name__ == '__main__':
