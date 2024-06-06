@@ -43,8 +43,9 @@ def process_dir(file_name):
 
     # This makes the object that contains all the data and info about the channels. Computations like plotting, averaging, power spectrums can be performed on this object
     custom_raw = mne.io.RawArray(data, info)
+    cropped_raw = custom_raw.crop(5000, 15000) # testing dataset - 52800, 52805 for seizure, 52910, 52915 for non seizure, 52782, 52812 for both
 
-    return custom_raw
+    return cropped_raw
 
 
 def plot_raw(eeg_data,file_name):
@@ -76,9 +77,8 @@ def main():
     print('-------------------------------------------------------------')
 
     #path to the recording .dat file
-    #file_path = '/Users/sarahtennant/Work_Alfredo/Analysis/SYNGAPE8/DATA/SYNGAPE8/SYNGAPE8_2875/' # for syngape8 rats
-    file_path = '/Users/sarahtennant/Work_Alfredo/Analysis/GNU/DATA/GNU/GNU_702/' # for GNU mice
-    recording = 'TAINI_1048_702_EM3-2024_04_15-0000.dat' # for rat 176923
+    file_path = '/Volumes/Sarah/SYNGAPE8/DATA/SYNGAPE8/12W/SYNGAPE8_2777/' # for GNU mice
+    recording = 'TAINI_1044_2777_EM40-2024_04_03-0000.dat' # for rat 176923
     #configuration_path =  'TAINI_1044_2777_EM40-2024_04_03-0000_configuration.yaml'
 
     file_name = file_path + recording
@@ -90,7 +90,7 @@ def main():
 
 
     #set path to save data
-    output_path = '/Users/sarahtennant/Work_Alfredo/Analysis/GNU/Figures'
+    output_path = '/Users/sarahtennant/Work_Alfredo/Analysis/SYNGAPE8/Figures'
     # if the output path does not exist, make it
     if os.path.exists(output_path) is False:
         os.makedirs(output_path)
