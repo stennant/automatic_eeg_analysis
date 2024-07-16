@@ -8,15 +8,18 @@ import os
 
 
 """
+
+### POWER SPECTRA ACROSS SLEEP STATES ###
+
 This script does the following: 
 1. loads raw EEG data using the MNE package 
 2. Plot power spectra for all data
-3. Load sleep score data
+3. Load sleep score data (output from R)
 4. Split EEG data based on sleep score (i.e. WAKE, NREM, REM)
 5. Calculate and plot power spectra for each sleep state
 
 Channel map : 
-EMG 1 --- 1 (this is 16 in 545)
+EMG 1 --- 1
 EM-L --- 5
 EV-L --- 8
 EM-R --- 9
@@ -28,7 +31,7 @@ number_of_channels = 16
 sample_rate = 250.4
 sample_datatype = 'int16'
 display_decimation = 1
-
+swd = True
 
 #To set start and end times, put sample start and end below
 start_sample=128304
@@ -38,11 +41,7 @@ tmax = end_sample/sample_rate
 
 
 # To load data, put file location and name below
-file_path = '/Volumes/Sarah/GNU/DATA/GNU/GNU_702'
-recording = '/TAINI_1048_702_EM3-2024_04_15-0000.dat'
-
-file_name = file_path + recording
-
+file_name = '/Volumes/Sarah/GNU/DATA/GNU/GNU_702/TAINI_1048_702_EM3-2024_04_15-0000.dat'
 output_path = '/Volumes/Sarah/GNU/DATA/GNU/GNU_702'
 
 # if the output path does not exist, make it
@@ -56,8 +55,10 @@ state_data_path = '/Volumes/Sarah/GNU/OUTPUT/GNU/GNU_702/GNU_702_BL1-dge_swd.csv
 colors=dict(mag='darkblue', grad='b', eeg='k', eog='k', ecg='m',emg='g', ref_meg='steelblue', misc='steelblue', stim='b',resp='k', chpi='k')
 
 # Assign labels to sleep score
-event_id = {"Wake":0, "NREM":1, "REM":2, "SWD":4}  # Assign labels to sleep score
-
+if swd == True: # if seizures are included
+    event_id = {"Wake":0, "NREM":1, "REM":2, "SWD":4}  # Assign labels to sleep score
+if swd == False: # if seizures are not included
+    event_id = {"Wake":0, "NREM":1, "REM":2}  # Assign labels to sleep score
 
 # load data file as RawArray using mne package
 def load_dat(file_name):
@@ -82,29 +83,31 @@ def load_dat(file_name):
     # This creates the info that goes with the channels, which is names, sampling rate, and channel types
     info = mne.create_info(channel_names, sample_rate, channel_types)
 
-
     # This makes the object that contains all the data and info about the channels. Computations like plotting, averaging, power spectrums can be performed on this object
     custom_raw = mne.io.RawArray(data, info)
 
-    # For testing code, take only a small segment of the data
-    #custom_raw = custom_raw.crop(tmin=0, tmax=60) # this is for testing
+    # crop data
+    #custom_raw = custom_raw.crop(tmin=0, tmax=60) # For testing code, take only a small segment of the data
     #custom_raw = custom_raw.crop(tmin, tmax) # take full 24 hour recording
     return custom_raw
+
+# Define a function to map the values
+def set_value(row_number, assigned_value):
+    return assigned_value[row_number]
 
 
 # Create a label for the sleep data - currently unused
 def label_sleep_data(data):
     data['description'] = ''
 
-    # Define a function to map the values
-    def set_value(row_number, assigned_value):
-        return assigned_value[row_number]
-
     # Create the dictionary
-    event_dictionary = {0: "Wake", 1: "NREM", 2: "REM", 4: "SWD"}
+    if swd == True:  # if seizures are included
+        event_id = {"Wake": 0, "NREM": 1, "REM": 2, "SWD": 4}  # Assign labels to sleep score
+    if swd == False:  # if seizures are not included
+        event_id = {"Wake": 0, "NREM": 1, "REM": 2}  # Assign labels to sleep score
 
     # Add a new column named 'Price'
-    data['description'] = data['sleep.score'].apply(set_value, args=(event_dictionary, ))
+    data['description'] = data['sleep.score'].apply(set_value, args=(event_id, ))
     return data
 
 
@@ -113,6 +116,7 @@ def load_state_data(state_data_path):
 
     # Load sleep state score from .csv
     data = pd.read_csv(state_data_path, delimiter=",") # read .csv file with sleep score
+
     data['onset'] = data.index*5 # make column of time (index of the dataframe)
     data['duration'] = 5 # set duration of event - set as 5 since the sleep score is calculated in epochs of 5 seconds
 
@@ -176,13 +180,17 @@ def power_spectra_by_state(custom_raw, annotated_custom_raw, array_events, event
     return custom_raw
 
 
-
+# load the data file
 custom_raw = load_dat(file_name)
 
+# load the sleep state data
 annotations = load_state_data(state_data_path)
 
+#
 annotated_custom_raw, events_from_annot = view_annotations(custom_raw, annotations, event_id)
 
+#
 plot_events_on_raw(custom_raw, events_from_annot, event_id)
 
+#
 power_spectra_by_state(custom_raw,annotated_custom_raw, events_from_annot, event_id)
