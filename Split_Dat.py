@@ -40,19 +40,39 @@ def split_recording(file_path):
     plt.switch_backend('TkAgg')  # need this for plotting interactive plot
     plt.ion()  # need this for plotting interactive plot
 
-    custom_raw.crop(5000,5100).plot(None, 1, 0,
+    custom_raw.crop(5000,315100).plot(None, 1, 0,
                     order=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15], show_options="true", block=True)
 
 
     eeg_data = pd.DataFrame(data)
 
-    #day1 = eeg_data.iloc[:16,:]
-    day2 = eeg_data.iloc[:, 1250000:2250000]
+    day1 = eeg_data.iloc[:,13792033:35426592]
+    day2 = eeg_data.iloc[:,35426592:57061152]
+    day3 = eeg_data.iloc[:,57061152:78695712]
+    day4 = eeg_data.iloc[:,78695712:100330272]
+    day5 = eeg_data.iloc[:,100330272:121964832]
+    day6 = eeg_data.iloc[:,121964832:143599392]
+    day7 = eeg_data.iloc[:,143599392:165233952]
+    day8 = eeg_data.iloc[:,165233952:186868512]
+    #day2 = eeg_data.iloc[:, 1250000:2250000]
 
-    #day1 = first_headstage.values.flatten("F")
-    day2_values = day2.values.flatten("F")
+    day1_values = day1.values.flatten()
+    day2_values = day2.values.flatten()
+    day3_values = day3.values.flatten()
+    day4_values = day4.values.flatten()
+    day5_values = day5.values.flatten()
+    day6_values = day6.values.flatten()
+    day7_values = day7.values.flatten()
+    day8_values = day8.values.flatten()
 
-    day2_values.astype('int16').tofile('/Users/sarahtennant/Work_Alfredo/Analysis/Lucy/SYNGAP_3686/3686_Day2.dat')
+    day1_values.astype('int16').tofile('/Users/sarahtennant/Work_Alfredo/Analysis/Lucy/SYNGAP_3686/3687_Day1.dat')
+    day2_values.astype('int16').tofile('/Users/sarahtennant/Work_Alfredo/Analysis/Lucy/SYNGAP_3686/3687_Day2.dat')
+    day3_values.astype('int16').tofile('/Users/sarahtennant/Work_Alfredo/Analysis/Lucy/SYNGAP_3686/3687_Day3.dat')
+    day4_values.astype('int16').tofile('/Users/sarahtennant/Work_Alfredo/Analysis/Lucy/SYNGAP_3686/3687_Day4.dat')
+    day5_values.astype('int16').tofile('/Users/sarahtennant/Work_Alfredo/Analysis/Lucy/SYNGAP_3686/3687_Day5.dat')
+    day6_values.astype('int16').tofile('/Users/sarahtennant/Work_Alfredo/Analysis/Lucy/SYNGAP_3686/3687_Day6.dat')
+    day7_values.astype('int16').tofile('/Users/sarahtennant/Work_Alfredo/Analysis/Lucy/SYNGAP_3686/3687_Day7.dat')
+    day8_values.astype('int16').tofile('/Users/sarahtennant/Work_Alfredo/Analysis/Lucy/SYNGAP_3686/3687_Day8.dat')
 
 
 
@@ -98,9 +118,9 @@ def main():
     split_recording(file_name)
 
     #check the .dat file
-    dat_filename2 = '/Users/sarahtennant/Work_Alfredo/Analysis/Lucy/SYNGAP_3686/3686_Day2.dat'
-    dat = load_dat(dat_filename2)
-    plot_raw(dat[:,1250000:1260000], 250)
+    #dat_filename2 = '/Users/sarahtennant/Work_Alfredo/Analysis/Lucy/SYNGAP_3686/3686_Day2.dat'
+    #dat = load_dat(dat_filename2)
+    #plot_raw(dat[:,:10000], 250)
 
 
 if __name__ == '__main__':

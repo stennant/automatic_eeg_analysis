@@ -17,7 +17,7 @@ def parameters(recording_folder):
     prm.set_file_path(recording_folder)
     prm.set_local_recording_folder_path(recording_folder)
     prm.set_output_path(recording_folder)
-    prm.set_sampling_rate(250.4)
+    prm.set_sampling_rate(250)
     prm.set_number_of_channels(16)
     prm.set_sample_datatype('int16')
     prm.set_display_decimation(1)
@@ -35,23 +35,24 @@ def process_dir(file_name):
 
     del(dat_chans)
     channel_names=['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16']
-    channel_types=['emg','misc','eeg','misc','misc','misc','emg','misc','misc','misc','misc','misc','eeg','misc','misc','eeg']
+    channel_types=['misc','misc','eeg','misc','misc','misc','emg','misc','misc','misc','misc','misc','eeg','misc','misc','misc']
 
+    #channel_names=['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16','17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31', '32']
+    #channel_types=['misc','misc','eeg','misc','misc','misc','emg','misc','misc','misc','misc','misc','eeg','misc','misc','misc','misc','misc','eeg','misc','misc','misc','emg','misc','misc','misc','misc','misc','eeg','misc','misc','misc']
 
     # This creates the info that goes with the channels, which is names, sampling rate, and channel types
     info = mne.create_info(channel_names, prm.get_sampling_rate(), channel_types)
 
     # This makes the object that contains all the data and info about the channels. Computations like plotting, averaging, power spectrums can be performed on this object
     custom_raw = mne.io.RawArray(data, info)
-    cropped_raw = custom_raw.crop(5000, 15000) # testing dataset - 52800, 52805 for seizure, 52910, 52915 for non seizure, 52782, 52812 for both
+    #cropped_raw = custom_raw.crop(5000, 6000) # testing dataset - 52800, 52805 for seizure, 52910, 52915 for non seizure, 52782, 52812 for both
 
-    return cropped_raw
+    return custom_raw
 
 
 def plot_raw(eeg_data,file_name):
 
     mne.viz.set_browser_backend('matplotlib', verbose=None)
-
 
     #To set start and end times, put sample start and end below
     #tmin = prm.get_start_sample()/prm.get_sampling_rate()
@@ -63,11 +64,10 @@ def plot_raw(eeg_data,file_name):
     plt.switch_backend('TkAgg') # need this for plotting interactive plot
     plt.ion() # need this for plotting interactive plot
 
-    #fig = eeg_data.crop(tmin, tmax).plot(None, 60, 0, 16,color = colors, scalings = "auto", order=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15], show_options = "true" )
-    #fig = eeg_data.crop(tmin, tmax).plot(None, 60, 0, 16,color = colors, scalings = "auto", order=[0,1,7,8,9,14,15], show_options = "true" )
-    fig = eeg_data.plot(None, 60, 0, 16,color = colors, scalings = "auto", order=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15], show_options = "true" )
+    #fig = eeg_data.plot(None, 60, 0, 16,color = colors, scalings = "auto", order=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15], show_options = "true" )
+    #fig = eeg_data.crop(1000,1100).plot(None, 60, 0, 32,color = colors, scalings = "auto", order=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31], show_options = "true" )
+    fig = eeg_data.crop(71273,154337).plot(None, 60, 0, 16,color = colors, scalings = "auto", order=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15], show_options = "true" )
     fig.savefig(file_name + 'eeg_snippet.png')
-
 
 
 
@@ -77,8 +77,8 @@ def main():
     print('-------------------------------------------------------------')
 
     #path to the recording .dat file
-    file_path = '/Volumes/Sarah/SYNGAPE8/DATA/SYNGAPE8/12W/SYNGAPE8_2777/' # for GNU mice
-    recording = 'TAINI_1044_2777_EM40-2024_04_03-0000.dat' # for rat 176923
+    file_path = '/Volumes/Sarah/SYNGAPE8/DATA/SYNGAPE8/12W/SYNGAPE8_3138/' # for GNU mice
+    recording = 'TAINI_1044_3138_EM31_C-2024_07_26-0000.dat'# for rat 176923
     #configuration_path =  'TAINI_1044_2777_EM40-2024_04_03-0000_configuration.yaml'
 
     file_name = file_path + recording
@@ -100,7 +100,6 @@ def main():
 
     # PLOT DATA
     plot_raw(eeg_data, output_path)
-
 
 
 if __name__ == '__main__':
