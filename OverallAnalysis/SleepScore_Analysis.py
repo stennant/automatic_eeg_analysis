@@ -1,5 +1,4 @@
 import math
-
 from pylab import *
 from mne import io
 import pandas as pd
@@ -7,34 +6,12 @@ import itertools
 import os
 import numpy as np
 
+import Seizure_Correction
 
 def process_dir(file_path):
     # Load sleep state score from .csv
     data = pd.read_csv(file_path, delimiter=",") # read .csv file with sleep score
     return data
-
-def round_down(num, divisor):
-    return num - (num % divisor)
-
-def correct_seizures(data, seizure_times_path):
-    # Load seizure correction from .csv
-    seizure_times = pd.read_csv(seizure_times_path, delimiter=",") # read .csv file with sleep score
-    seizure_number = len(np.array(seizure_times['dur']))
-
-    for rowcount, row in enumerate(range(len(seizure_times))):
-        seizure_start_time = seizure_times.at[rowcount, 'sec_start']
-        seizure_duration = round_down(seizure_times.at[rowcount, 'dur'], 1)
-        epoch_start_number = seizure_start_time/5
-        epoch = int(round(epoch_start_number))
-        if data.at[epoch, "sleep.score"] != 4:
-            data.at[epoch, "sleep.score"] = 4
-        if seizure_duration > 5:
-            if data.at[epoch+1, "sleep.score"] != 4:
-                data.at[epoch+1, "sleep.score"] = 4
-        if seizure_duration > 10:
-            if data.at[epoch+2, "sleep.score"] != 4:
-                data.at[epoch+2, "sleep.score"] = 4
-    return data, seizure_number
 
 def calculate_total_states(data):
     df = pd.DataFrame(columns=['hour','total_wake_epochs','total_nrem_epochs','total_rem_epochs','total_swd_epochs'])
@@ -244,8 +221,8 @@ def plot_bout_durations(df, seizure_number, output_path):
     ax = percent_histogram.add_subplot(1, 1, 1)  # specify (nrows, ncols, axnum)
     ax.bar(bins, average_durations, color = color)
     #ax.plot(np.random.uniform(low=0.6, high=1.4, size=(len(np.array(df.loc[:, "wake_bout_durations"])))), np.array(df.loc[:, "wake_bout_durations"]), color = "LightSkyBlue")
-    ax.plot(np.random.uniform(low=1.6, high=2.4, size=(len(np.array(df.loc[:, "nrem_bout_durations"])))), np.array(df.loc[:, "nrem_bout_durations"]), color = "DodgerBlue")
-    ax.plot(np.random.uniform(low=2.6, high=3.4, size=(len(np.array(df.loc[:, "rem_bout_durations"])))), np.array(df.loc[:, "rem_bout_durations"]), color = "Blue")
+    #ax.plot(np.random.uniform(low=1.6, high=2.4, size=(len(np.array(df.loc[:, "nrem_bout_durations"])))), np.array(df.loc[:, "nrem_bout_durations"]), color = "DodgerBlue")
+    #ax.plot(np.random.uniform(low=2.6, high=3.4, size=(len(np.array(df.loc[:, "rem_bout_durations"])))), np.array(df.loc[:, "rem_bout_durations"]), color = "Blue")
     plt.errorbar(bins, average_durations, average_sd, fmt='none', ls='', marker='o', capsize=5, capthick=1, ecolor='black')
     plt.ylabel('Average bout time (seconds)', fontsize=12, labelpad=10)
     plt.xlabel('Sleep state', fontsize=12, labelpad=10)
@@ -358,24 +335,25 @@ def Analyse_SleepScore(sleep_state_path, seizure_times_path, output_path):
     df = calculate_total_states(data)
     plot_total_states(df, output_path)
 
+    # CALCULATE TOTAL STATES IN LIGHT AND DARK
+    df = calculate_total_states_in_light_and_dark(data)
+    plot_total_states(df, output_path)
+
     # CALCULATE STATES PER HOUR
     df = calculate_states_per_hour(data)
     df = calculate_percent_states_per_hour(df)
     plot_states_per_hour(df, output_path)
-
     save_states_to_csv(df, output_path)
 
     # CALCULATE NUMBER AND LENGTH OF BOUTS
     df = calculate_total_bouts(data)
     df = calculate_bout_duration(df)
     plot_bout_durations(df, seizure_number, output_path)
-
     save_bout_durations_to_csv(df, output_path)
 
     # CALCULATE TOTAL TIME IN EACH STATE
     df = calculate_duration_per_hour(df)
     plot_total_durations(df, output_path)
-
     save_bout_durations_per_hour_to_csv(df, output_path)
 
 
@@ -395,7 +373,7 @@ def main():
     data = process_dir(file_name) # overall data
 
     # SEIZURE CORRECTION
-    data, seizure_number = correct_seizures(data, seizure_times_path)
+    data, seizure_number = Seizure_Correction.correct_seizures(data, seizure_times_path)
 
     # CALCULATE TOTAL STATES
     df = calculate_total_states(data)
@@ -405,25 +383,19 @@ def main():
     df = calculate_states_per_hour(data)
     df = calculate_percent_states_per_hour(df)
     plot_states_per_hour(df, output_path)
-
     save_states_to_csv(df, output_path)
 
     # CALCULATE NUMBER AND LENGTH OF BOUTS
     df = calculate_total_bouts(data)
     df = calculate_bout_duration(df)
     plot_bout_durations(df, seizure_number, output_path)
-
     save_bout_durations_to_csv(df, output_path)
 
     # CALCULATE TOTAL TIME IN EACH STATE
     df = calculate_duration_per_hour(df)
     plot_total_durations(df, output_path)
-
     save_bout_durations_per_hour_to_csv(df, output_path)
 
-    #COUNT SEIZURES 2 MIN EITHER SIZE OF SLEEP
-    df = calculate_seizures_around_sleep(data, df)
-    save_seizure_data_to_csv(df, output_path)
 
 if __name__ == '__main__':
     main()

@@ -17,7 +17,7 @@ def parameters(recording_folder):
     prm.set_file_path(recording_folder)
     prm.set_local_recording_folder_path(recording_folder)
     prm.set_output_path(recording_folder)
-    prm.set_sampling_rate(250)
+    prm.set_sampling_rate(250.4)
     prm.set_number_of_channels(16)
     prm.set_sample_datatype('int16')
     prm.set_display_decimation(1)
@@ -66,7 +66,7 @@ def plot_raw(eeg_data,file_name):
 
     #fig = eeg_data.plot(None, 60, 0, 16,color = colors, scalings = "auto", order=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15], show_options = "true" )
     #fig = eeg_data.crop(1000,1100).plot(None, 60, 0, 32,color = colors, scalings = "auto", order=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31], show_options = "true" )
-    fig = eeg_data.crop(71273,154337).plot(None, 60, 0, 16,color = colors, scalings = "auto", order=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15], show_options = "true" )
+    fig = eeg_data.crop(0,154337).plot(None, 60, 0, 16,color = colors, scalings = "auto", order=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15], show_options = "true" )
     fig.savefig(file_name + 'eeg_snippet.png')
 
 
@@ -77,8 +77,8 @@ def main():
     print('-------------------------------------------------------------')
 
     #path to the recording .dat file
-    file_path = '/Volumes/Sarah/SYNGAPE8/DATA/SYNGAPE8/12W/SYNGAPE8_3138/' # for GNU mice
-    recording = 'TAINI_1044_3138_EM31_C-2024_07_26-0000.dat'# for rat 176923
+    file_path = '/Volumes/Sarah/SYNGAPE8/DATA/SYNGAPE8/12W/SYNGAPE8_2780/' # for GNU mice
+    recording = 'TAINI_1048_2780_EM4-2024_04_05-0000.dat'# for rat 176923
     #configuration_path =  'TAINI_1044_2777_EM40-2024_04_03-0000_configuration.yaml'
 
     file_name = file_path + recording

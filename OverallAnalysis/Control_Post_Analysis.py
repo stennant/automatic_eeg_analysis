@@ -1,3 +1,12 @@
+"""
+Author: Sarah Tennant
+Date: 8/8/2024
+Script: Control_Post_Analysis.py
+
+Description: 
+
+"""
+
 import SleepScore_Analysis
 import Seizure_Analysis
 
