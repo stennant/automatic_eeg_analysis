@@ -37,9 +37,6 @@ def process_dir(file_name):
     channel_names=['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16']
     channel_types=['misc','misc','eeg','misc','misc','misc','emg','misc','misc','misc','misc','misc','eeg','misc','misc','misc']
 
-    #channel_names=['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16','17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30', '31', '32']
-    #channel_types=['misc','misc','eeg','misc','misc','misc','emg','misc','misc','misc','misc','misc','eeg','misc','misc','misc','misc','misc','eeg','misc','misc','misc','emg','misc','misc','misc','misc','misc','eeg','misc','misc','misc']
-
     # This creates the info that goes with the channels, which is names, sampling rate, and channel types
     info = mne.create_info(channel_names, prm.get_sampling_rate(), channel_types)
 
@@ -66,7 +63,7 @@ def plot_raw(eeg_data,file_name):
 
     #fig = eeg_data.plot(None, 60, 0, 16,color = colors, scalings = "auto", order=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15], show_options = "true" )
     #fig = eeg_data.crop(1000,1100).plot(None, 60, 0, 32,color = colors, scalings = "auto", order=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31], show_options = "true" )
-    fig = eeg_data.crop(0,154337).plot(None, 60, 0, 16,color = colors, scalings = "auto", order=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15], show_options = "true" )
+    fig = eeg_data.plot(None, 60, 0, 16,color = colors, scalings = "auto", order=[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15], show_options = "true" )
     fig.savefig(file_name + 'eeg_snippet.png')
 
 
@@ -77,8 +74,8 @@ def main():
     print('-------------------------------------------------------------')
 
     #path to the recording .dat file
-    file_path = '/Volumes/Sarah/SYNGAPE8/DATA/SYNGAPE8/12W/SYNGAPE8_2780/' # for GNU mice
-    recording = 'TAINI_1048_2780_EM4-2024_04_05-0000.dat'# for rat 176923
+    file_path = '/Volumes/Sarah/Lucy/SYNGAP_3688/' # for GNU mice
+    recording = '3688_Day1.dat'# for rat 176923
     #configuration_path =  'TAINI_1044_2777_EM40-2024_04_03-0000_configuration.yaml'
 
     file_name = file_path + recording
