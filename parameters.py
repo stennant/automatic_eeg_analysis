@@ -15,6 +15,7 @@ class Parameters:
     recording_length = 'int16'
     continuous_file_name = ''
     continuous_file_name_end = ''
+    filelength = 'int16'
 
     def __init__(self):
         return
@@ -75,6 +76,12 @@ class Parameters:
 
     def set_recording_length(self, in6):
         Parameters.recording_length = in6
+
+    def get_filelength(self):
+        return Parameters.filelength
+
+    def set_filelength(self, in6):
+        Parameters.filelength = in6
 
     def get_display_decimation(self):
         return Parameters.display_decimation
